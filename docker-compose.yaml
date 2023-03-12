@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: .
+    depends_on:
+      - flyway
+    ports:
+      - '8080:8080'
+
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:mysql://db:3306/todo -user=root -password=password migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+      - ./src/main/resources/flyway.conf:/flyway/conf/flyway.conf
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0.32
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: 'todo'
+    ports:
+      - '3306:3306'
+#    volumes:
+#      - todo_springmvc:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 30s
+      retries: 10
+
+volumes:
+  todo_springmvc:
