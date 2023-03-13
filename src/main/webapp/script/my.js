@@ -16,15 +16,15 @@ function edit_task(task_id) {
 
     // replace "edit" button with "save"
     let identifier_edit = "#edit_" + task_id;
-    let save_tag = "<button id='save_" + task_id + "'>Save</button>";
+    let save_tag = "<button id='save_" + task_id + "' class='btn btn-outline-success'>Save</button>";
     $(identifier_edit).html(save_tag);
     let property_save_tag = "update_task(" + task_id + ")";
-    $(identifier_edit).attr("onclick", property_save_tag);
+    $(identifier_edit).children().attr("onclick", property_save_tag);
 
-    let current_tr_element = $(identifier_edit).parent().parent();
+    let current_tr_element = $(identifier_edit).parent();
     let children = current_tr_element.children();
     let td_description = children[1];
-    td_description.innerHTML = "<input id='input_description_" + task_id + "' type='text' value='" + td_description.innerHTML + "'>";
+    td_description.innerHTML = "<input id='input_description_" + task_id + "' type='text' value='" + td_description.innerHTML + "' class='form-control form-control-sm' size='1'>";
 
     let td_status = children[2];
     let status_id = "#select_status_" + task_id;
@@ -35,8 +35,7 @@ function edit_task(task_id) {
 
 function getDropdownStatusHtml(task_id) {
     let status_id = "select_status_" + task_id;
-    return "<label for='status'></label>"
-        + "<select id=" + status_id + " name='status'>"
+    return "<select id=" + status_id + " name='status' class='form-select form-select-sm' style='width: 60%'>"
         + "<option value='IN_PROGRESS'>IN_PROGRESS</option>"
         + "<option value='DONE'>DONE</option>"
         + "<option value='PAUSED'>PAUSED</option>"

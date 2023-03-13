@@ -4,6 +4,10 @@ td, th {
     color: black;
 }
 
+tr.new_task td {
+    border: none !important;
+}
+
 .active_page {
     color: rgba(255, 99, 71, 0.99);
 }

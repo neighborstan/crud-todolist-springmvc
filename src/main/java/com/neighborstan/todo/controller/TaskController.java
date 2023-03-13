@@ -19,6 +19,8 @@ import static java.util.Objects.isNull;
 @Data
 public class TaskController {
 
+    public static final int PAGE = 1;
+    public static final int LIMIT = 5;
     private final TaskService taskService;
 
     @Autowired
@@ -29,15 +31,16 @@ public class TaskController {
     @GetMapping
     public String tasks(Model model,
                             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                            @RequestParam(value = "limit", required = false, defaultValue = "10") int limit) {
+                            @RequestParam(value = "limit", required = false, defaultValue = "5") int limit) {
 
-        List<Task> tasks = taskService.getAll((page - 1) * limit, limit);
+        List<Task> tasks = taskService.getAll((page - PAGE) * limit, limit);
         model.addAttribute("tasks", tasks);
         model.addAttribute("current_page", page);
         int totalPages = (int) Math.ceil(1.0 * taskService.getAllCount() / limit);
-        if (totalPages > 1) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages).boxed().toList();
+        if (totalPages > PAGE) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(PAGE, totalPages).boxed().toList();
             model.addAttribute("page_numbers", pageNumbers);
+            model.addAttribute("limit", LIMIT);
         }
         return "tasks";
     }
@@ -52,7 +55,7 @@ public class TaskController {
         }
 
         taskService.edit(id, info.getDescription(), info.getStatus());
-        return tasks(model, 1, 10);
+        return tasks(model, PAGE, LIMIT);
     }
 
     @PostMapping
@@ -60,7 +63,7 @@ public class TaskController {
                     @RequestBody TaskInfo info) {
 
         taskService.create(info.getDescription(), info.getStatus());
-        return tasks(model, 1, 10);
+        return tasks(model, PAGE, LIMIT);
     }
 
     @DeleteMapping("/{id}")
@@ -72,6 +75,6 @@ public class TaskController {
         }
         taskService.delete(id);
 
-        return tasks(model, 1, 10);
+        return tasks(model, PAGE, LIMIT);
     }
 }
